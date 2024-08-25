@@ -1,0 +1,90 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Song {
+  artist            Artist?          @relation(fields: [artistId], references: [id])
+  artistId          String?
+  createdAt         DateTime         @default(now())
+  difficultyLevel   DifficultyLevel? @relation(fields: [difficultyLevelId], references: [id])
+  difficultyLevelId String?
+  genre             Genre?           @relation(fields: [genreId], references: [id])
+  genreId           String?
+  id                String           @id @default(cuid())
+  language          Language?        @relation(fields: [languageId], references: [id])
+  languageId        String?
+  lyrics            String?
+  songChords        SongChord[]
+  title             String?
+  updatedAt         DateTime         @updatedAt
+}
+
+model Artist {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  songs     Song[]
+  updatedAt DateTime @updatedAt
+}
+
+model Genre {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  songs     Song[]
+  updatedAt DateTime @updatedAt
+}
+
+model Language {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  songs     Song[]
+  updatedAt DateTime @updatedAt
+}
+
+model SongChord {
+  chord     Chord?   @relation(fields: [chordId], references: [id])
+  chordId   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  position  Int?
+  song      Song?    @relation(fields: [songId], references: [id])
+  songId    String?
+  updatedAt DateTime @updatedAt
+}
+
+model Chord {
+  createdAt       DateTime    @default(now())
+  diagram         Json?
+  fingerPositions String?
+  id              String      @id @default(cuid())
+  name            String?
+  songChords      SongChord[]
+  updatedAt       DateTime    @updatedAt
+}
+
+model DifficultyLevel {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  level     String?
+  songs     Song[]
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
